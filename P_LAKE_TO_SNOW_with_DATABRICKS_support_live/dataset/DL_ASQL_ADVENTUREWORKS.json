@@ -1,0 +1,13 @@
+{
+    "name": "DL_ASQL_ADVENTUREWORKS",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "LS_ASQL_ADVENTUREWORKS",
+            "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "AzureSqlTable",
+        "schema": []
+    },
+    "type": "Microsoft.DataFactory/factories/datasets"
+}

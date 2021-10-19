@@ -1,0 +1,42 @@
+{
+    "name": "DS_ADLS2_ADVENTUREWORKS",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "LS_ADLS2_ADVENTUREWORKS",
+            "type": "LinkedServiceReference"
+        },
+        "parameters": {
+            "SRC_SCHEMA": {
+                "type": "string"
+            },
+            "SRC_TAB_NAME": {
+                "type": "string"
+            },
+            "DST_SCHEMA": {
+                "type": "string"
+            },
+            "DST_TAB_NAME": {
+                "type": "string"
+            },
+            "SRC_DB": {
+                "type": "string"
+            }
+        },
+        "annotations": [],
+        "type": "Parquet",
+        "typeProperties": {
+            "location": {
+                "type": "AzureBlobFSLocation",
+                "fileName": {
+                    "value": "@{item().SRC_DB}/@{item().SRC_SCHEMA}/@{item().DST_TAB_NAME}/@{formatDateTime(utcnow(),'yyyy-MM-dd')}/ @{item().DST_TAB_NAME}",
+                    "type": "Expression"
+                },
+                "folderPath": "raw",
+                "fileSystem": "poc"
+            },
+            "compressionCodec": "snappy"
+        },
+        "schema": []
+    },
+    "type": "Microsoft.DataFactory/factories/datasets"
+}

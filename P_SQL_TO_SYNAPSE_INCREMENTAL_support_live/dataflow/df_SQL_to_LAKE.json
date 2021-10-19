@@ -1,0 +1,28 @@
+{
+    "name": "df_SQL_to_LAKE",
+    "properties": {
+        "type": "MappingDataFlow",
+        "typeProperties": {
+            "sources": [
+                {
+                    "dataset": {
+                        "referenceName": "azsqldb_DDM",
+                        "type": "DatasetReference"
+                    },
+                    "name": "srcSQL"
+                }
+            ],
+            "sinks": [
+                {
+                    "dataset": {
+                        "referenceName": "DS_ADLS2_2",
+                        "type": "DatasetReference"
+                    },
+                    "name": "dstLake"
+                }
+            ],
+            "transformations": [],
+            "script": "parameters{\n\tSQLCommand as string,\n\tWhereValue as string,\n\tFileName as string\n}\nsource(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: (\"{$SQLCommand}'{$WhereValue}'\"),\n\tformat: 'query') ~> srcSQL\nsrcSQL sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tpartitionFileNames:[($FileName)],\n\tumask: 0022,\n\tpreCommands: [],\n\tpostCommands: [],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tpartitionBy('hash', 1)) ~> dstLake"
+        }
+    }
+}

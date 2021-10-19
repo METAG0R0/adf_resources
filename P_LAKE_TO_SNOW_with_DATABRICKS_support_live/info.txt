@@ -1,0 +1,6 @@
+selected resource name:		P_LAKE_TO_SNOW_with_DATABRICKS
+selected resource type:		pipeline
+factory name:			datafactorytest2022
+factory location:		westus
+subscription id:		4b1c98d8-74cc-411b-88ba-708de8c70d06
+time of download (UTC):		Thu, 14 Oct 2021 09:55:40 GMT

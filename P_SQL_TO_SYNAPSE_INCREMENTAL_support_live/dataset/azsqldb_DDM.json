@@ -1,0 +1,12 @@
+{
+    "name": "azsqldb_DDM",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "LS_ASQL_DDM",
+            "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "AzureSqlTable",
+        "schema": []
+    }
+}

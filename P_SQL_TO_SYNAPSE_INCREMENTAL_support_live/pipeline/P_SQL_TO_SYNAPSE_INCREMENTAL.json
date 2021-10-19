@@ -1,0 +1,164 @@
+{
+    "name": "P_SQL_TO_SYNAPSE_INCREMENTAL",
+    "properties": {
+        "activities": [
+            {
+                "name": "Get-Tables",
+                "type": "Lookup",
+                "dependsOn": [],
+                "policy": {
+                    "timeout": "7.00:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "source": {
+                        "type": "AzureSqlSource",
+                        "sqlReaderQuery": "SELECT src_schema,\n       src_db,\n       src_name,\n       dst_schema,\n       dst_type,\n       dst_name,\n       dst_folder,\n       process_type,\n       file_type,\n       load_synapse,\n       distribution_type,\n       upsert_key_column,\n       incremental_watermark_column,       \n       CASE\n         WHEN process_type = 'FULL'         THEN 'select * from ' + src_schema + '.' + src_name + ' where  1 = '\n         WHEN process_type = 'Incremental'  THEN 'select * from ' + src_schema + '.' + src_name + ' where  ' + incremental_watermark_column + ' > '\n       END AS SQLCommand,\n       CASE\n         WHEN process_type = 'FULL' THEN '1'\n         WHEN process_type = 'incremental' THEN Cast(Isnull(incremental_watermark_value, 'yyyy-MM-dd') AS VARCHAR(50))\n       END                               AS WhereValue,\n       dst_folder + '/' + dst_name + '/' + file_type + '/' + Format(Getdate(), 'yyyy-MM-dd') AS FolderName,\n       dst_name + '.' + file_type        AS FileName       \nFROM   dbo.pipeline_parameter\nWHERE  load_synapse = 1\n       AND process_type = 'incremental'",
+                        "queryTimeout": "02:00:00",
+                        "partitionOption": "None"
+                    },
+                    "dataset": {
+                        "referenceName": "azsqldb_DM_sink",
+                        "type": "DatasetReference"
+                    },
+                    "firstRowOnly": false
+                }
+            },
+            {
+                "name": "Copy-Each-Table",
+                "type": "ForEach",
+                "dependsOn": [
+                    {
+                        "activity": "Get-Tables",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "userProperties": [],
+                "typeProperties": {
+                    "items": {
+                        "value": "@activity('Get-Tables').output.value",
+                        "type": "Expression"
+                    },
+                    "activities": [
+                        {
+                            "name": "df_SQL_to_lake_incremental",
+                            "type": "ExecuteDataFlow",
+                            "dependsOn": [],
+                            "policy": {
+                                "timeout": "1.00:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "dataflow": {
+                                    "referenceName": "df_SQL_to_LAKE",
+                                    "type": "DataFlowReference",
+                                    "parameters": {
+                                        "SQLCommand": {
+                                            "value": "'@{item().SQLCommand}'",
+                                            "type": "Expression"
+                                        },
+                                        "WhereValue": {
+                                            "value": "'@{item().WhereValue}'",
+                                            "type": "Expression"
+                                        },
+                                        "FileName": {
+                                            "value": "'@{item().FileName}'",
+                                            "type": "Expression"
+                                        }
+                                    },
+                                    "datasetParameters": {
+                                        "dstLake": {
+                                            "FolderName": {
+                                                "value": "@item().FolderName",
+                                                "type": "Expression"
+                                            }
+                                        }
+                                    }
+                                },
+                                "compute": {
+                                    "coreCount": 8,
+                                    "computeType": "General"
+                                },
+                                "traceLevel": "Fine"
+                            }
+                        },
+                        {
+                            "name": "df_upsert_to_synapse",
+                            "type": "ExecuteDataFlow",
+                            "dependsOn": [
+                                {
+                                    "activity": "df_SQL_to_lake_incremental",
+                                    "dependencyConditions": [
+                                        "Succeeded"
+                                    ]
+                                }
+                            ],
+                            "policy": {
+                                "timeout": "1.00:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "dataflow": {
+                                    "referenceName": "df_upsert_to_synapse",
+                                    "type": "DataFlowReference",
+                                    "parameters": {
+                                        "FolderName": {
+                                            "value": "@item().FolderName",
+                                            "type": "Expression"
+                                        },
+                                        "upsert_key_column": {
+                                            "value": "@item().upsert_key_column",
+                                            "type": "Expression"
+                                        }
+                                    },
+                                    "datasetParameters": {
+                                        "srcLake": {
+                                            "FolderName": "@item().FolderName"
+                                        },
+                                        "dstSynapse": {
+                                            "dst_name": {
+                                                "value": "@item().dst_name",
+                                                "type": "Expression"
+                                            },
+                                            "dts_schema": {
+                                                "value": "@item().dst_schema",
+                                                "type": "Expression"
+                                            }
+                                        }
+                                    }
+                                },
+                                "staging": {
+                                    "linkedService": {
+                                        "referenceName": "LS_AZUREDATALAKESTORAGE2",
+                                        "type": "LinkedServiceReference"
+                                    },
+                                    "folderPath": "stg/temp"
+                                },
+                                "compute": {
+                                    "coreCount": 8,
+                                    "computeType": "General"
+                                },
+                                "traceLevel": "Fine"
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "annotations": []
+    }
+}

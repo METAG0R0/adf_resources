@@ -1,0 +1,192 @@
+{
+    "name": "DS_SNOW_ADF_CTL",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "LS_SNOW_ADFDB",
+            "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "SnowflakeTable",
+        "schema": [
+            {
+                "name": "PARAMETER_ID",
+                "type": "NUMBER",
+                "precision": 38,
+                "scale": 0
+            },
+            {
+                "name": "SERVER_NAME",
+                "type": "VARCHAR",
+                "precision": 244,
+                "scale": 0
+            },
+            {
+                "name": "SRC_TYPE",
+                "type": "VARCHAR",
+                "precision": 244,
+                "scale": 0
+            },
+            {
+                "name": "SRC_SCHEMA",
+                "type": "VARCHAR",
+                "precision": 244,
+                "scale": 0
+            },
+            {
+                "name": "SRC_DB",
+                "type": "VARCHAR",
+                "precision": 244,
+                "scale": 0
+            },
+            {
+                "name": "SRC_TAB_NAME",
+                "type": "VARCHAR",
+                "precision": 244,
+                "scale": 0
+            },
+            {
+                "name": "DST_TYPE",
+                "type": "VARCHAR",
+                "precision": 244,
+                "scale": 0
+            },
+            {
+                "name": "DST_TAB_NAME",
+                "type": "VARCHAR",
+                "precision": 244,
+                "scale": 0
+            },
+            {
+                "name": "INCLUDE_PIPELINE_FLAG",
+                "type": "VARCHAR",
+                "precision": 244,
+                "scale": 0
+            },
+            {
+                "name": "PROCESS_TYPE",
+                "type": "VARCHAR",
+                "precision": 244,
+                "scale": 0
+            },
+            {
+                "name": "LOAD_SNOWFLAKE",
+                "type": "VARCHAR",
+                "precision": 244,
+                "scale": 0
+            },
+            {
+                "name": "LOAD_FREQUENCY",
+                "type": "VARCHAR",
+                "precision": 244,
+                "scale": 0
+            },
+            {
+                "name": "DST_FOLDER",
+                "type": "VARCHAR",
+                "precision": 244,
+                "scale": 0
+            },
+            {
+                "name": "FILE_TYPE",
+                "type": "VARCHAR",
+                "precision": 244,
+                "scale": 0
+            },
+            {
+                "name": "LAKE_DST_FOLDER",
+                "type": "VARCHAR",
+                "precision": 244,
+                "scale": 0
+            },
+            {
+                "name": "DST_SCHEMA",
+                "type": "VARCHAR",
+                "precision": 244,
+                "scale": 0
+            },
+            {
+                "name": "DISTRIBUTION_TYPE",
+                "type": "VARCHAR",
+                "precision": 244,
+                "scale": 0
+            },
+            {
+                "name": "ASQL_TO_LAKE_PIPELINE_DATE",
+                "type": "TIMESTAMP_NTZ",
+                "precision": 29,
+                "scale": 9
+            },
+            {
+                "name": "ASQL_TO_LAKE_PIPELINE_STATUS",
+                "type": "VARCHAR",
+                "precision": 244,
+                "scale": 0
+            },
+            {
+                "name": "LOAD_SNOW_ETL_PIPELINE_DATE",
+                "type": "TIMESTAMP_NTZ",
+                "precision": 29,
+                "scale": 9
+            },
+            {
+                "name": "LOAD_SNOW_ETL_PIPELINE_STATUS",
+                "type": "VARCHAR",
+                "precision": 244,
+                "scale": 0
+            },
+            {
+                "name": "LOAD_SNOW_CURATED_PIPELINE_DATE",
+                "type": "TIMESTAMP_NTZ",
+                "precision": 29,
+                "scale": 9
+            },
+            {
+                "name": "LOAD_SNOW_CURATED_PIPELINE_STATUS",
+                "type": "VARCHAR",
+                "precision": 244,
+                "scale": 0
+            },
+            {
+                "name": "LOAD_DELTA_PIPELINE_DATE",
+                "type": "TIMESTAMP_NTZ",
+                "precision": 29,
+                "scale": 9
+            },
+            {
+                "name": "LOAD_DELTA_PIPELINE_STATUS",
+                "type": "VARCHAR",
+                "precision": 244,
+                "scale": 0
+            },
+            {
+                "name": "PARTITION_FIELD",
+                "type": "VARCHAR",
+                "precision": 244,
+                "scale": 0
+            },
+            {
+                "name": "PRIORITY_LANE",
+                "type": "VARCHAR",
+                "precision": 244,
+                "scale": 0
+            },
+            {
+                "name": "SPARK_FLAG",
+                "type": "VARCHAR",
+                "precision": 244,
+                "scale": 0
+            },
+            {
+                "name": "SWIM_LANE",
+                "type": "NUMBER",
+                "precision": 38,
+                "scale": 0
+            }
+        ],
+        "typeProperties": {
+            "schema": "PUBLIC",
+            "table": "PIPELINE_CTL"
+        }
+    },
+    "type": "Microsoft.DataFactory/factories/datasets"
+}

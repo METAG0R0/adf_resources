@@ -1,0 +1,30 @@
+{
+    "name": "DS_ASQL_SYNAPSE",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "LS_AZURESYNAPSEANALYTICS",
+            "type": "LinkedServiceReference"
+        },
+        "parameters": {
+            "dst_name": {
+                "type": "string"
+            },
+            "dts_schema": {
+                "type": "string"
+            }
+        },
+        "annotations": [],
+        "type": "AzureSqlDWTable",
+        "schema": [],
+        "typeProperties": {
+            "schema": {
+                "value": "@dataset().dts_schema",
+                "type": "Expression"
+            },
+            "table": {
+                "value": "@dataset().dst_name",
+                "type": "Expression"
+            }
+        }
+    }
+}

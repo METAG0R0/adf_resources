@@ -1,0 +1,155 @@
+{
+    "name": "P_LAKE_TO_SNOW_with_DATABRICKS",
+    "properties": {
+        "activities": [
+            {
+                "name": "Lookup_Get_Tables",
+                "description": "Read and fetch the list of tables to be copied from control table",
+                "type": "Lookup",
+                "dependsOn": [],
+                "policy": {
+                    "timeout": "7.00:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "source": {
+                        "type": "SnowflakeSource",
+                        "exportSettings": {
+                            "type": "SnowflakeExportCopyCommand"
+                        }
+                    },
+                    "dataset": {
+                        "referenceName": "DS_SNOW_ADF_CTL",
+                        "type": "DatasetReference"
+                    },
+                    "firstRowOnly": false
+                }
+            },
+            {
+                "name": "FOREACH_COPY_TABLES",
+                "type": "ForEach",
+                "dependsOn": [
+                    {
+                        "activity": "Lookup_Get_Tables",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "userProperties": [],
+                "typeProperties": {
+                    "items": {
+                        "value": "@activity('Lookup_Get_Tables').output.value",
+                        "type": "Expression"
+                    },
+                    "isSequential": false,
+                    "activities": [
+                        {
+                            "name": "CP_ASQL_TO_LAKE",
+                            "type": "Copy",
+                            "dependsOn": [],
+                            "policy": {
+                                "timeout": "7.00:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "source": {
+                                    "type": "AzureSqlSource",
+                                    "sqlReaderQuery": {
+                                        "value": "SELECT * FROM @{item().SRC_SCHEMA}.@{item().SRC_TAB_NAME}",
+                                        "type": "Expression"
+                                    },
+                                    "queryTimeout": "02:00:00",
+                                    "partitionOption": "None"
+                                },
+                                "sink": {
+                                    "type": "ParquetSink",
+                                    "storeSettings": {
+                                        "type": "AzureBlobFSWriteSettings"
+                                    },
+                                    "formatSettings": {
+                                        "type": "ParquetWriteSettings"
+                                    }
+                                },
+                                "enableStaging": false,
+                                "translator": {
+                                    "type": "TabularTranslator",
+                                    "typeConversion": true,
+                                    "typeConversionSettings": {
+                                        "allowDataTruncation": true,
+                                        "treatBooleanAsNumber": false
+                                    }
+                                }
+                            },
+                            "inputs": [
+                                {
+                                    "referenceName": "DL_ASQL_ADVENTUREWORKS",
+                                    "type": "DatasetReference"
+                                }
+                            ],
+                            "outputs": [
+                                {
+                                    "referenceName": "DS_ADLS2_ADVENTUREWORKS",
+                                    "type": "DatasetReference",
+                                    "parameters": {
+                                        "SRC_SCHEMA": "@{item().SRC_SCHEMA}",
+                                        "SRC_TAB_NAME": "@{item().SRC_TAB_NAME}",
+                                        "DST_SCHEMA": "@{item().DST_SCHEMA}",
+                                        "DST_TAB_NAME": "@{item().DST_TAB_NAME}",
+                                        "SRC_DB": "@{item().SRC_DB}"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "name": "NB_LAKE_TO_SNOW",
+                            "type": "DatabricksNotebook",
+                            "dependsOn": [
+                                {
+                                    "activity": "CP_ASQL_TO_LAKE",
+                                    "dependencyConditions": [
+                                        "Succeeded"
+                                    ]
+                                }
+                            ],
+                            "policy": {
+                                "timeout": "7.00:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "notebookPath": "/Users/irvinlopez354@hotmail.com/DataLake_To_Snowflake",
+                                "baseParameters": {
+                                    "DST_TAB_NAME": "@{item().DST_TAB_NAME}",
+                                    "DST_SCHEMA": "@{item().DST_SCHEMA}",
+                                    "FOLDER_PATH": {
+                                        "value": "raw/AdventureWorksLT/SalesLT/@{item().DST_TAB_NAME}/@{formatDateTime(utcnow(),'yyyy')}-@{formatDateTime(utcnow(),'MM')}-@{formatDateTime(utcnow(),'dd')}/",
+                                        "type": "Expression"
+                                    }
+                                }
+                            },
+                            "linkedServiceName": {
+                                "referenceName": "AzureDatabricks1",
+                                "type": "LinkedServiceReference"
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "annotations": [],
+        "lastPublishTime": "2021-10-12T14:27:40Z"
+    },
+    "type": "Microsoft.DataFactory/factories/pipelines"
+}

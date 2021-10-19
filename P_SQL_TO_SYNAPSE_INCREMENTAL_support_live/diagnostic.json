@@ -1,0 +1,22 @@
+{
+    "now": "2021-10-14T10:25:53.064Z",
+    "perfNow": 157547085.59999996,
+    "diagnosticCorrelation": "71ff6b05-4476-4c72-a9fd-8f13cfeb563c",
+    "source": "DownloadSupportFiles",
+    "environment": {
+        "productName": "adf",
+        "buildVersion": "1.0.20211006.4",
+        "environmentType": 3,
+        "resourceName": "datafactorytest2022",
+        "resourceRegion": "westus",
+        "resourceGroup": "the_azure_book",
+        "subscriptionId": "4b1c98d8-74cc-411b-88ba-708de8c70d06",
+        "sessionId": "CN4bm",
+        "operationId": "45hJF",
+        "gitType": "live"
+    },
+    "additionalInfo": {
+        "selectedResource": "P_SQL_TO_SYNAPSE_INCREMENTAL",
+        "selectedResourceType": "pipeline"
+    }
+}

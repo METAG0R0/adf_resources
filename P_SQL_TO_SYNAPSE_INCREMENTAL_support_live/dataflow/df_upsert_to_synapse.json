@@ -1,0 +1,32 @@
+{
+    "name": "df_upsert_to_synapse",
+    "properties": {
+        "type": "MappingDataFlow",
+        "typeProperties": {
+            "sources": [
+                {
+                    "dataset": {
+                        "referenceName": "DS_ADLS2_2",
+                        "type": "DatasetReference"
+                    },
+                    "name": "srcLake"
+                }
+            ],
+            "sinks": [
+                {
+                    "dataset": {
+                        "referenceName": "DS_ASQL_SYNAPSE",
+                        "type": "DatasetReference"
+                    },
+                    "name": "dstSynapse"
+                }
+            ],
+            "transformations": [
+                {
+                    "name": "AlterRow"
+                }
+            ],
+            "script": "parameters{\n\tFolderName as string,\n\tupsert_key_column as string\n}\nsource(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet',\n\twildcardPaths:[($FolderName)]) ~> srcLake\nsrcLake alterRow(upsertIf(true())) ~> AlterRow\nAlterRow sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:false,\n\tupsertable:true,\n\tkeys:[($upsert_key_column)],\n\tformat: 'table',\n\tstaged: true,\n\tallowCopyCommand: true,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError') ~> dstSynapse"
+        }
+    }
+}

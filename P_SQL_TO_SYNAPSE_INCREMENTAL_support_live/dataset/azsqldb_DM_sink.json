@@ -1,0 +1,12 @@
+{
+    "name": "azsqldb_DM_sink",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "DS_AZSQL_DMM_SINK",
+            "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "AzureSqlTable",
+        "schema": []
+    }
+}

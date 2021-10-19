@@ -1,0 +1,22 @@
+{
+    "now": "2021-10-14T09:55:40.726Z",
+    "perfNow": 155734747.59999996,
+    "diagnosticCorrelation": "33a6be2e-3bc9-436b-a613-89dca2e4ce28",
+    "source": "DownloadSupportFiles",
+    "environment": {
+        "productName": "adf",
+        "buildVersion": "1.0.20211006.4",
+        "environmentType": 3,
+        "resourceName": "datafactorytest2022",
+        "resourceRegion": "westus",
+        "resourceGroup": "the_azure_book",
+        "subscriptionId": "4b1c98d8-74cc-411b-88ba-708de8c70d06",
+        "sessionId": "CN4bm",
+        "operationId": "45hJF",
+        "gitType": "live"
+    },
+    "additionalInfo": {
+        "selectedResource": "P_LAKE_TO_SNOW_with_DATABRICKS",
+        "selectedResourceType": "pipeline"
+    }
+}
