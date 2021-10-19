@@ -1,0 +1,29 @@
+val storage_account_name = "datalaketest2022"
+val storage_account_access_key = "stloZ7nkj7o6n9JSTEZhCHS02oQNiSnbFVXbcCYoeZujiSj82q+apQ7l5O/q9GUh1obYBnAQHRE1p67mcuPwgA=="
+
+import org.apache.spark.sql.{SaveMode, SparkSession}
+spark.conf.set(
+  "fs.azure.account.key."+storage_account_name+".dfs.core.windows.net", storage_account_access_key  
+)
+
+val DST_TAB_NAME = dbutils.widgets.get("DST_TAB_NAME")
+val DST_SCHEMA = dbutils.widgets.get("DST_SCHEMA")
+val FOLDER_PATH = dbutils.widgets.get("FOLDER_PATH")
+
+var options = Map(
+  "sfUrl" -> "oe75680.west-us-2.azure.snowflakecomputing.com/",
+  "sfUser" -> "MLOPEZ13",
+  "sfPassword" -> "aI521351",
+  "sfDatabase" -> "ADVENTUREWORKS",
+  "sfSchema" -> DST_SCHEMA,
+  "truncate_table" -> "ON",
+  "usestagingtable" -> "OFF",
+  "sfWarehouse" -> "COMPUTE_WH"
+)
+val df = spark.read.parquet("abfss://poc@"+storage_account_name+".dfs.core.windows.net/"+FOLDER_PATH)
+df.write
+    .format("snowflake")
+    .options(options)
+    .option("dbtable", DST_TAB_NAME)
+    .mode(SaveMode.Overwrite)
+    .save()
